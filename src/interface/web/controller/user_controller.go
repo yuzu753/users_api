@@ -19,10 +19,18 @@ func NewUserController(su *usecase.UserSearchUsecase) *UserController {
 func (uc *UserController) Search(c *gin.Context) {
 	tenantID := c.Param("tenant_id")
 	
+	var userType *int
+	if typeStr := c.Query("type"); typeStr != "" {
+		if val, err := strconv.Atoi(typeStr); err == nil {
+			userType = &val
+		}
+	}
+	
 	in := usecase.UserSearchIn{
 		TenantID: tenantID,
 		UserName: c.Query("user_name"),
 		Email:    c.Query("email"),
+		Type:     userType,
 		Limit:    parseInt(c.Query("limit"), 20),
 		Offset:   parseInt(c.Query("offset"), 0),
 	}

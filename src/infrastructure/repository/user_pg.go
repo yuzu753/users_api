@@ -63,7 +63,7 @@ func (r *UserPg) Delete(ctx context.Context, tenantID string, id domain.UserID) 
 	return err
 }
 
-func (r *UserPg) Search(ctx context.Context, tenantID, userName, email string, limit, offset int) ([]*domain.User, int, error) {
+func (r *UserPg) Search(ctx context.Context, tenantID, userName, email string, userType *int, limit, offset int) ([]*domain.User, int, error) {
 	table := fmt.Sprintf("users_%s", tenantID)
 	where := []string{"1=1"}
 	args := []any{}
@@ -75,6 +75,10 @@ func (r *UserPg) Search(ctx context.Context, tenantID, userName, email string, l
 	if email != "" {
 		where = append(where, fmt.Sprintf("email ILIKE '%%' || $%d || '%%'", len(args)+1))
 		args = append(args, email)
+	}
+	if userType != nil {
+		where = append(where, fmt.Sprintf("type = $%d", len(args)+1))
+		args = append(args, *userType)
 	}
 
 	countSQL := fmt.Sprintf("SELECT COUNT(1) FROM %s WHERE %s", table, strings.Join(where, " AND "))

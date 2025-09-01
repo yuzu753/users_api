@@ -9,6 +9,7 @@ type UserSearchIn struct {
 	TenantID string
 	UserName string
 	Email    string
+	Type     *int
 	Limit    int
 	Offset   int
 }
@@ -22,5 +23,5 @@ func NewUserSearchUsecase(r domain.UserRepository) *UserSearchUsecase {
 }
 
 func (uc *UserSearchUsecase) Do(ctx context.Context, in UserSearchIn) ([]*domain.User, int, error) {
-	return uc.repo.Search(ctx, in.TenantID, in.UserName, in.Email, in.Limit, in.Offset)
+	return uc.repo.Search(ctx, in.TenantID, in.UserName, in.Email, in.Type, in.Limit, in.Offset)
 }
