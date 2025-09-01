@@ -27,13 +27,13 @@ func (uc *UserController) Search(c *gin.Context) {
 		Offset:   parseInt(c.Query("offset"), 0),
 	}
 	
-	users, total, err := uc.searchUC.Do(c, in)
+	users, _, err := uc.searchUC.Do(c, in)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 	
-	c.JSON(http.StatusOK, gin.H{"items": users, "total": total})
+	c.JSON(http.StatusOK, users)
 }
 
 func parseInt(s string, defaultVal int) int {

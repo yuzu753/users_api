@@ -1,4 +1,4 @@
-package web
+package runtime
 
 import (
 	"users_api/src/interface/web/controller"

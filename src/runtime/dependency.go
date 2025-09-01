@@ -3,7 +3,6 @@ package runtime
 import (
 	"users_api/src/infrastructure/datasource"
 	"users_api/src/infrastructure/repository"
-	"users_api/src/interface/web"
 	"users_api/src/interface/web/controller"
 	"users_api/src/usecase"
 
@@ -17,6 +16,6 @@ var Module = fx.Options(
 		repository.NewUserPg,
 		usecase.NewUserSearchUsecase,
 		controller.NewUserController,
-		web.NewRouter,
+		NewRouter,
 	),
 )
