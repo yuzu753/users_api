@@ -1,0 +1,93 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Users API Lambda Function
+
+Globals:
+  Function:
+    Timeout: 30
+    MemorySize: 512
+    Runtime: provided.al2
+
+Parameters:
+  Environment:
+    Type: String
+    Default: dev
+    AllowedValues: [dev, staging, prod]
+  
+  DBHost:
+    Type: String
+    Description: Database host
+  
+  DBUser:
+    Type: String
+    Description: Database user
+    
+  DBPassword:
+    Type: String
+    Description: Database password
+    NoEcho: true
+  
+  DBName:
+    Type: String
+    Default: app
+    Description: Database name
+
+Resources:
+  UsersApiFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub users-api-${Environment}
+      CodeUri: lambda.zip
+      Handler: bootstrap
+      Description: Users API Lambda Function
+      Environment:
+        Variables:
+          DB_HOST: !Ref DBHost
+          DB_PORT: 5432
+          DB_USER: !Ref DBUser
+          DB_PASSWORD: !Ref DBPassword
+          DB_NAME: !Ref DBName
+          DB_SSLMODE: require
+          GIN_MODE: release
+      Events:
+        ApiGateway:
+          Type: Api
+          Properties:
+            Path: /{proxy+}
+            Method: ANY
+            RestApiId: !Ref UsersApiGateway
+        ApiGatewayRoot:
+          Type: Api
+          Properties:
+            Path: /
+            Method: ANY
+            RestApiId: !Ref UsersApiGateway
+
+  UsersApiGateway:
+    Type: AWS::Serverless::Api
+    Properties:
+      Name: !Sub users-api-gateway-${Environment}
+      StageName: !Ref Environment
+      Cors:
+        AllowMethods: "'GET,POST,PUT,DELETE,OPTIONS'"
+        AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+        AllowOrigin: "'*'"
+
+  UsersApiFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub /aws/lambda/users-api-${Environment}
+      RetentionInDays: 14
+
+Outputs:
+  UsersApiFunction:
+    Description: Users API Lambda Function ARN
+    Value: !GetAtt UsersApiFunction.Arn
+    
+  UsersApiGatewayUrl:
+    Description: API Gateway endpoint URL
+    Value: !Sub https://${UsersApiGateway}.execute-api.${AWS::Region}.amazonaws.com/${Environment}/
+    
+  UsersApiGatewayId:
+    Description: API Gateway ID
+    Value: !Ref UsersApiGateway

@@ -84,3 +84,53 @@ Set in `docker-compose.yml`:
 - `DB_PASSWORD=postgres`
 - `DB_NAME=app`
 - `DB_SSLMODE=disable`
+
+## AWS Lambda Deployment
+
+### Prerequisites
+- AWS CLI configured
+- Lambda function created (or use SAM template)
+
+### Quick Deploy Commands
+
+```bash
+# Build and deploy Lambda package
+make lambda
+
+# Or step by step
+make build-lambda    # Creates lambda.zip
+make deploy-lambda   # Deploys to AWS
+```
+
+### Manual Deployment
+
+```bash
+# Clean and build
+rm -f bootstrap lambda.zip
+GOOS=linux GOARCH=amd64 go build -o bootstrap cmd/lambda/main.go
+zip lambda.zip bootstrap
+
+# Deploy with AWS CLI
+aws lambda update-function-code \
+    --function-name users-api \
+    --zip-file fileb://lambda.zip
+```
+
+### SAM Deployment
+
+```bash
+# Deploy with SAM (requires template.yaml)
+sam build
+sam deploy --guided
+```
+
+### Environment Variables for Lambda
+
+Set these in your Lambda function:
+- `DB_HOST` - RDS endpoint
+- `DB_PORT=5432`
+- `DB_USER` - Database user
+- `DB_PASSWORD` - Database password
+- `DB_NAME=app`
+- `DB_SSLMODE=require`
+- `GIN_MODE=release`

@@ -9,6 +9,6 @@ import (
 func main() {
 	fx.New(
 		runtime.Module,
-		fx.Invoke(runtime.Start), // Use server start function
+		fx.Invoke(runtime.StartLambda), // Use Lambda start function
 	).Run()
 }

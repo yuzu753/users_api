@@ -37,3 +37,8 @@ Thumbs.db
 # Environment files
 .env
 .env.local
+
+# Lambda deployment artifacts
+bootstrap
+lambda.zip
+.aws-sam/

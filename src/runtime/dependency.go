@@ -19,5 +19,4 @@ var Module = fx.Options(
 		controller.NewUserController,
 		web.NewRouter,
 	),
-	fx.Invoke(Start),
 )

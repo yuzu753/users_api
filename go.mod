@@ -5,6 +5,8 @@ go 1.23
 toolchain go1.24.6
 
 require (
+	github.com/aws/aws-lambda-go v1.41.0
+	github.com/awslabs/aws-lambda-go-api-proxy v0.16.0
 	github.com/gin-gonic/gin v1.9.1
 	github.com/jackc/pgx/v5 v5.4.3
 	go.uber.org/fx v1.20.0
